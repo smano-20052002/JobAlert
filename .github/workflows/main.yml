@@ -1,0 +1,28 @@
+name: Daily Job Search Agent
+
+on:
+  schedule:
+    - cron: '30 3 * * *'  # 9:00 AM IST = 3:30 AM UTC every day
+  workflow_dispatch:        # Manual trigger from GitHub UI anytime
+
+jobs:
+  search-and-notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run job search agent
+        run: python job_agent.py
+        env:
+          SERPAPI_KEY:       ${{ secrets.SERPAPI_KEY }}
+          TELEGRAM_TOKEN:    ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID:  ${{ secrets.TELEGRAM_CHAT_ID }}
